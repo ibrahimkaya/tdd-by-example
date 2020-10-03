@@ -7,8 +7,8 @@ import java.util.Objects;
  * @create 3.10.2020 15:01
  */
 public class Pair {
-    private String from;
-    private String to;
+    private final String from;
+    private final String to;
 
     public Pair(String from, String to) {
         this.from = from;

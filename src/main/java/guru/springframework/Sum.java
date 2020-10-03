@@ -5,17 +5,26 @@ package guru.springframework;
  * @create 3.10.2020 12:51
  */
 public class Sum implements Expression{
-    Money augmend;
-    Money addmend;
+    final Expression augmend;
+    final Expression addmend;
 
-    public Sum(Money augmend, Money addmend) {
+    public Sum(Expression augmend, Expression addmend) {
         this.augmend = augmend;
         this.addmend = addmend;
     }
 
     @Override
     public Money reduce(Bank bank, String to){
-        int amount = augmend.amount + addmend.amount;
+        int amount = augmend.reduce(bank,to).amount + addmend.reduce(bank,to).amount;
         return new Money(amount, to);
+    }
+
+    public Expression plus() {
+        return new Sum(this, addmend);
+    }
+
+    @Override
+    public Expression times(int multiplier) {
+        return new Sum(augmend.times(multiplier), addmend.times(multiplier));
     }
 }
