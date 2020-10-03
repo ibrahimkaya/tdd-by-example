@@ -6,8 +6,7 @@ import java.util.Objects;
  * @Author ibrahim
  * @create 2.10.2020 16:25
  */
-public abstract class Money {
-
+public class Money implements Expression {
     protected int amount;
 
     protected String currency;
@@ -17,30 +16,44 @@ public abstract class Money {
         this.currency = currency;
     }
 
-    public abstract Money times(int multiplier);
-
-    public static Money dollar(int amount) {
-        return new Dollar(amount, "USD");
+    protected String currency() {
+        return currency;
     }
 
-    public static Money franc(int amount) {
-        return new Franc(amount, "CHF");
+    public static Money dollar(int amount){
+        return new Money(amount, "USD");
     }
 
-    public String currency() {
-        return this.currency;
+    public static Money franc(int amount){
+        return new Money(amount, "CHF");
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Money money = (Money) o;
-        return amount == money.amount;
+    public boolean equals(Object object) {
+        Money money = (Money) object;
+        return amount == money.amount
+                && this.currency.equals( money.currency);
     }
 
     @Override
-    public int hashCode() {
-        return Objects.hash(amount);
+    public Money reduce(Bank bank, String to){
+        //return this;
+        //int rate = (currency.equals("CHF") && to.equals("USD")) ? 2 : 1;
+        return new Money(amount / bank.rate(this.currency, to), to);
+    }
+
+    @Override
+    public String toString() {
+        return "Money{" +
+                "amount=" + amount +
+                ", currency='" + currency + '\'' +
+                '}';
+    }
+
+    public Money times(int multiplier) {
+        return new Money(amount * multiplier, this.currency);
+    }
+
+    public Expression plus(Money addend){
+        return new Sum(this, addend);
     }
 }
